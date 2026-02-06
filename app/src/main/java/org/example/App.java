@@ -14,16 +14,15 @@ public class App {
     static double playerY = 100;
     static double speed = 200f; // pixels per second
 
-    static void update(double delta, long window) {
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS)
+    static void update(double delta, Input input) {
+        if (input.isKeyDown(GLFW.GLFW_KEY_W))
             playerY -= speed * delta;
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS)
+        if (input.isKeyDown(GLFW.GLFW_KEY_S))
             playerY += speed * delta;
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS)
+        if (input.isKeyDown(GLFW.GLFW_KEY_D))
             playerX += speed * delta;
-        if (GLFW.glfwGetKey(window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS)
+        if (input.isKeyDown(GLFW.GLFW_KEY_A))
             playerX -= speed * delta;
-
     }
 
     static void render() {
@@ -48,6 +47,9 @@ public class App {
         }
 
         long window = GLFW.glfwCreateWindow(800, 600, "LWJGL", 0, 0);
+
+        Input input = new Input(window);
+
         GLFW.glfwMakeContextCurrent(window);
 
         GL.createCapabilities();
@@ -64,7 +66,7 @@ public class App {
             double now = GLFW.glfwGetTime();
             double delta = now - lastTime;
             lastTime = now;
-            update(delta, window);
+            update(delta, input);
             render();
 
             GLFW.glfwSwapBuffers(window);
