@@ -10,36 +10,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class App {
 
-    static double playerX = 100;
-    static double playerY = 100;
-    static double speed = 200f; // pixels per second
-
-    static void update(double delta, Input input) {
-        if (input.isKeyDown(GLFW.GLFW_KEY_W))
-            playerY -= speed * delta;
-        if (input.isKeyDown(GLFW.GLFW_KEY_S))
-            playerY += speed * delta;
-        if (input.isKeyDown(GLFW.GLFW_KEY_D))
-            playerX += speed * delta;
-        if (input.isKeyDown(GLFW.GLFW_KEY_A))
-            playerX -= speed * delta;
-    }
-
-    static void render() {
-        glClearColor(0.2f, 0.6f, 0.8f, 1.0f); // background
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glLoadIdentity();
-
-        glColor3f(1.0f, 1.0f, 0.0f);
-        // Load a player
-        glBegin(GL_QUADS);
-        glVertex2f((float) playerX, (float) playerY);
-        glVertex2f((float) (playerX + 32), (float) playerY);
-        glVertex2f((float) (playerX + 32), (float) (playerY + 32));
-        glVertex2f((float) playerX, (float) (playerY + 32));
-        glEnd();
-    }
+    static Player player;
+    static Input input;
 
     public static void main(String[] args) {
         if (!GLFW.glfwInit()) {
@@ -48,7 +20,8 @@ public class App {
 
         long window = GLFW.glfwCreateWindow(800, 600, "LWJGL", 0, 0);
 
-        Input input = new Input(window);
+        input = new Input(window);
+        player = new Player(100, 100);
 
         GLFW.glfwMakeContextCurrent(window);
 
@@ -62,15 +35,22 @@ public class App {
         glDisable(GL_DEPTH_TEST);
 
         double lastTime = GLFW.glfwGetTime();
+
         while (!GLFW.glfwWindowShouldClose(window)) {
             double now = GLFW.glfwGetTime();
             double delta = now - lastTime;
             lastTime = now;
-            update(delta, input);
-            render();
 
-            GLFW.glfwSwapBuffers(window);
-            GLFW.glfwPollEvents();
+            player.update(delta, input);
+
+            // Render
+            glClearColor(0.2f, 0.6f, 0.8f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            player.render();
+
+            org.lwjgl.glfw.GLFW.glfwSwapBuffers(window);
+            org.lwjgl.glfw.GLFW.glfwPollEvents();
         }
 
         GLFW.glfwTerminate();
