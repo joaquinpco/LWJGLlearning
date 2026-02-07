@@ -1,6 +1,8 @@
-package org.example;
+package org.example.game;
 
 import static org.lwjgl.opengl.GL11.*;
+
+import org.example.interfaces.implementations.Input;
 
 public class Player {
 

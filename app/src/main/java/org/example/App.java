@@ -8,6 +8,9 @@ import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.example.game.Player;
+import org.example.interfaces.implementations.Input;
+
 public class App {
 
     static Player player;
