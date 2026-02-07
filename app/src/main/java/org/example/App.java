@@ -23,12 +23,13 @@ public class App {
 
         long window = GLFW.glfwCreateWindow(800, 600, "LWJGL", 0, 0);
 
-        input = new Input(window);
-        player = new Player(100, 100);
-
         GLFW.glfwMakeContextCurrent(window);
 
         GL.createCapabilities();
+        glEnable(GL_TEXTURE_2D);
+
+        input = new Input(window);
+        player = new Player(100, 100);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
