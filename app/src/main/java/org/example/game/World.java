@@ -16,19 +16,30 @@ public class World {
     }
 
     private void generateMaze() {
-        // Maze generation logic can be implemented here (e.g., recursive backtracking)
-        // Simple maze layout (0 = empty, 1 = wall)
+        // Clear maze (0 = empty, 1 = wall)
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
-                    maze[y][x] = 1; // walls around the edges
-                } else if ((x % 4 == 0) && (y % 4 == 0)) {
-                    maze[y][x] = 1; // some internal walls
-                } else {
-                    maze[y][x] = 0; // empty space
+                maze[y][x] = 0;
+            }
+        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (y == 0 || y == height - 1 || x == 0 || x == width - 1) {
+                    maze[y][x] = 1; // Border walls
                 }
             }
         }
+
+        for (int y = 2; y < height - 2; y += 4) {
+            for (int x = 2; x < width - 2; x += 4) {
+
+                if (Math.random() <= 0.8) { // 80% chance to place a wall
+                    maze[y][x] = 1; // Place a wall tile
+                }
+            }
+        }
+
     }
 
     public boolean isWall(float x, float y) {

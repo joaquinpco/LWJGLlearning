@@ -32,8 +32,9 @@ public class App {
         glEnable(GL_TEXTURE_2D);
 
         input = new Input(window);
-        player = new Player(100, 100);
+
         world = new World(20, 15);
+        player = new Player(100, 100, world);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();

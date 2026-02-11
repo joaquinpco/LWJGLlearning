@@ -17,6 +17,10 @@ public class Player {
     // Color
     public float r = 1.0f, g = 1.0f, b = 0.0f; // yellow
 
+    private World world;
+    private static final int COLLISION_RADIUS = 12;
+    private static final int SPRITE_SIZE = 32;
+
     private Texture rightText;
     private Texture leftText;
     private Texture upText;
@@ -24,7 +28,9 @@ public class Player {
 
     private Direction currentDirection = Direction.RIGHT;
 
-    public Player(float startX, float startY) {
+    public Player(float startX, float startY, World world) {
+        this.world = world;
+
         this.x = startX;
         this.y = startY;
 
@@ -37,20 +43,21 @@ public class Player {
 
     // Update position using Input
     public void update(double delta, Input input) {
+
         if (input.isUp()) {
-            y -= speed * delta;
-            this.currentDirection = Constants.Direction.DOWN;
-        }
-        if (input.isDown()) {
-            y += speed * delta;
+            moveIfValid(0, (int) -(speed * delta));
             this.currentDirection = Constants.Direction.UP;
         }
+        if (input.isDown()) {
+            moveIfValid(0, (int) (speed * delta));
+            this.currentDirection = Constants.Direction.DOWN;
+        }
         if (input.isLeft()) {
-            x -= speed * delta;
+            moveIfValid((int) -(speed * delta), 0);
             this.currentDirection = Constants.Direction.LEFT;
         }
         if (input.isRight()) {
-            x += speed * delta;
+            moveIfValid((int) (speed * delta), 0);
             this.currentDirection = Constants.Direction.RIGHT;
         }
     }
@@ -58,8 +65,8 @@ public class Player {
     // Draw player rectangle
     public void render() {
         Texture currentTexture = switch (currentDirection) {
-            case UP -> upText;
-            case DOWN -> downText;
+            case UP -> downText;
+            case DOWN -> upText;
             case LEFT -> leftText;
             case RIGHT -> rightText;
         };
@@ -81,5 +88,28 @@ public class Player {
         glVertex2f(x, y + height);
 
         glEnd();
+    }
+
+    private void moveIfValid(int dx, int dy) {
+        float newX = x + dx;
+        float newY = y + dy;
+
+        if (!checkCollision(newX, newY)) {
+            x = newX;
+            y = newY;
+        }
+    }
+
+    private boolean checkCollision(float x, float y) {
+        // Calculate sprite center
+        float centerX = x + SPRITE_SIZE / 2;
+        float centerY = y + SPRITE_SIZE / 2;
+
+        // Check circle around center with COLLISION_RADIUS
+        return world.isWall((int) (centerX - COLLISION_RADIUS), (int) (centerY - COLLISION_RADIUS)) ||
+                world.isWall((int) (centerX + COLLISION_RADIUS), (int) (centerY - COLLISION_RADIUS)) ||
+                world.isWall((int) (centerX - COLLISION_RADIUS), (int) (centerY + COLLISION_RADIUS)) ||
+                world.isWall((int) (centerX + COLLISION_RADIUS), (int) (centerY + COLLISION_RADIUS)) ||
+                world.isWall((int) centerX, (int) centerY); // Check center point too
     }
 }
