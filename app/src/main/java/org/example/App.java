@@ -5,15 +5,18 @@ package org.example;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
 import org.example.game.Player;
+import org.example.game.World;
 import org.example.interfaces.implementations.Input;
 
 public class App {
 
     static Player player;
+    static World world;
     static Input input;
 
     public static void main(String[] args) {
@@ -21,7 +24,7 @@ public class App {
             throw new IllegalStateException("GLFW init failed");
         }
 
-        long window = GLFW.glfwCreateWindow(800, 600, "LWJGL", 0, 0);
+        long window = GLFW.glfwCreateWindow(800, 600, "PAC-MAN", 0, 0);
 
         GLFW.glfwMakeContextCurrent(window);
 
@@ -30,6 +33,7 @@ public class App {
 
         input = new Input(window);
         player = new Player(100, 100);
+        world = new World(20, 15);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -48,8 +52,18 @@ public class App {
             player.update(delta, input);
 
             // Render
-            glClearColor(0.2f, 0.6f, 0.8f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            // Set up orthographic projection for 2D rendering
+            GL11.glMatrixMode(GL11.GL_PROJECTION);
+            GL11.glLoadIdentity();
+            GL11.glOrtho(0, 640, 480, 0, -1, 1);
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadIdentity();
+
+            // Disable textures for solid color rendering
+
+            world.render();
 
             player.render();
 
