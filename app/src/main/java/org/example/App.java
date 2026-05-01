@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.example.game.Enemy;
 import org.example.game.Player;
 import org.example.game.World;
 import org.example.interfaces.implementations.Input;
@@ -16,6 +17,7 @@ import org.example.interfaces.implementations.Input;
 public class App {
 
     static Player player;
+    static Enemy enemies[];
     static World world;
     static Input input;
 
@@ -35,6 +37,11 @@ public class App {
 
         world = new World(20, 15);
         player = new Player(100, 100, world);
+        enemies = new Enemy[] {
+                new Enemy(200, 150, world),
+                new Enemy(300, 250, world),
+                new Enemy(400, 120, world)
+        };
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -63,10 +70,14 @@ public class App {
             GL11.glLoadIdentity();
 
             // Disable textures for solid color rendering
+            for (Enemy enemy : enemies)
+                enemy.update(delta);
 
             world.render();
-
             player.render();
+
+            for (Enemy enemy : enemies)
+                enemy.render();
 
             org.lwjgl.glfw.GLFW.glfwSwapBuffers(window);
             org.lwjgl.glfw.GLFW.glfwPollEvents();

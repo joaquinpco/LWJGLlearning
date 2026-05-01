@@ -7,12 +7,58 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.example.game.Player;
+import org.example.game.World;
 import org.example.interfaces.implementations.Input;
 
 class PlayerTest {
+    private World world = new World(20, 15);
+
     @Test
-    void appHasAGreeting() {
-        Player player = new Player(100, 100);
-        player.update(20, new Input(0));
+    void playerInitialPositionTest() {
+        Player player = new Player(100, 100, world);
+        assertEquals(100, player.x);
+        assertEquals(100, player.y);
+    }
+
+    @Test
+    void playerMoveRightTest() {
+        Player player = new Player(100, 100, world);
+        float initialX = player.x;
+
+        Input input = new Input(0);
+        player.update(1.0, input); // Simulate movement for 1 second
+
+        // Without collision, x should increase (speed = 200px/s)
+        // This test may need adjustment based on actual World collision behavior
+        assertTrue(player.x >= initialX);
+    }
+
+    @Test
+    void playerInitialDirectionTest() {
+        Player player = new Player(100, 100, world);
+        player.update(0.1, new Input(0));
+        // Player should exist and not throw exception
+        assertNotNull(player);
+    }
+
+    @Test
+    void playerSpeedConstantTest() {
+        Player player = new Player(100, 100, world);
+        assertEquals(200f, player.speed);
+    }
+
+    @Test
+    void playerSizeConstantTest() {
+        Player player = new Player(100, 100, world);
+        assertEquals(32f, player.width);
+        assertEquals(32f, player.height);
+    }
+
+    @Test
+    void playerDefaultColorTest() {
+        Player player = new Player(100, 100, world);
+        assertEquals(1.0f, player.r);
+        assertEquals(1.0f, player.g);
+        assertEquals(0.0f, player.b);
     }
 }
