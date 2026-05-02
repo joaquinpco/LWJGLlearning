@@ -1,15 +1,18 @@
 package org.example.game;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2d;
 
+import org.example.render.Texture;
+
 public class Enemy {
+
+    private Texture texture;
+
     public float x, y;
     public float width = 32, height = 32;
     public float speed = 120f;
@@ -17,7 +20,10 @@ public class Enemy {
 
     private World world;
 
-    public Enemy(float startX, float startY, World world) {
+    public Enemy(float startX, float startY, String spriteName, World world) {
+
+        texture = new Texture(spriteName);
+
         this.x = startX;
         this.y = startY;
         this.world = world;
@@ -32,20 +38,24 @@ public class Enemy {
     }
 
     public void render() {
-        // Turns off 2D texturing
-        glDisable(GL_TEXTURE_2D);
-        glColor3f(1f, 0f, 0f);
-        // Starting drawing a quadrilateral primitive
-        glBegin(GL_QUADS);
-        // Draw rectangle
-        glVertex2d(x, y);
-        glVertex2d(x + width, y);
-        glVertex2d(x + width, y + height);
-        glVertex2d(x, y + height);
-        glEnd();
+        texture.bind();
 
         glColor3f(1f, 1f, 1f);
-        glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+
+        glTexCoord2f(0f, 0f);
+        glVertex2d(x, y);
+
+        glTexCoord2f(1f, 0f);
+        glVertex2d(x + width, y);
+
+        glTexCoord2f(1f, 1f);
+        glVertex2d(x + width, y + height);
+
+        glTexCoord2f(0f, 1f);
+        glVertex2d(x, y + height);
+
+        glEnd();
     }
 
     private void moveIfValid(float dx, float dy) {

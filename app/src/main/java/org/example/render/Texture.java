@@ -93,6 +93,14 @@ public class Texture {
         return buffer;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, id);
     }

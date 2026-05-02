@@ -38,9 +38,9 @@ public class App {
         world = new World(20, 15);
         player = new Player(100, 100, world);
         enemies = new Enemy[] {
-                new Enemy(200, 150, world),
-                new Enemy(300, 250, world),
-                new Enemy(400, 120, world)
+                new Enemy(200, 150, "ghost1.png", world),
+                new Enemy(300, 250, "ghost2.png", world),
+                new Enemy(400, 120, "ghost3.png", world)
         };
 
         glMatrixMode(GL_PROJECTION);
