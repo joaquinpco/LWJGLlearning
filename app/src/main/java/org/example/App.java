@@ -5,12 +5,13 @@ package org.example;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
 import org.example.game.Enemy;
+import org.example.game.Menu;
 import org.example.game.Player;
+import org.example.game.Settings;
 import org.example.game.World;
 import org.example.interfaces.implementations.Input;
 
@@ -20,19 +21,31 @@ public class App {
     static Enemy enemies[];
     static World world;
     static Input input;
+    static Menu menu;
+    static Settings settings;
+
+    static long window;
+
+    enum GameState {
+        MENU, PLAYING, PAUSED, SETTINGS
+    }
+
+    static GameState currentState = GameState.MENU;
 
     public static void main(String[] args) {
         if (!GLFW.glfwInit()) {
             throw new IllegalStateException("GLFW init failed");
         }
 
-        long window = GLFW.glfwCreateWindow(800, 600, "PAC-MAN", 0, 0);
+        window = GLFW.glfwCreateWindow(800, 600, "PAC-MAN", 0, 0);
 
         GLFW.glfwMakeContextCurrent(window);
 
         GL.createCapabilities();
         glEnable(GL_TEXTURE_2D);
 
+        menu = new Menu();
+        settings = new Settings();
         input = new Input(window);
 
         world = new World(20, 15);
@@ -50,6 +63,7 @@ public class App {
         glLoadIdentity();
         glDisable(GL_DEPTH_TEST);
 
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black background
         double lastTime = GLFW.glfwGetTime();
 
         while (!GLFW.glfwWindowShouldClose(window)) {
@@ -57,32 +71,102 @@ public class App {
             double delta = now - lastTime;
             lastTime = now;
 
-            player.update(delta, input);
-
-            // Render
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // Set up orthographic projection for 2D rendering
-            GL11.glMatrixMode(GL11.GL_PROJECTION);
-            GL11.glLoadIdentity();
-            GL11.glOrtho(0, 640, 480, 0, -1, 1);
-            GL11.glMatrixMode(GL11.GL_MODELVIEW);
-            GL11.glLoadIdentity();
+            switch (currentState) {
+                case MENU:
+                    handleMenuInput();
+                    menu.render();
+                    break;
 
-            // Disable textures for solid color rendering
-            for (Enemy enemy : enemies)
-                enemy.update(delta);
-
-            world.render();
-            player.render();
-
-            for (Enemy enemy : enemies)
-                enemy.render();
+                case PLAYING:
+                    updateGame(delta);
+                    renderGame();
+                    break;
+                case SETTINGS:
+                    handleSettingsInput();
+                    settings.render();
+                    break;
+            }
 
             org.lwjgl.glfw.GLFW.glfwSwapBuffers(window);
             org.lwjgl.glfw.GLFW.glfwPollEvents();
         }
 
         GLFW.glfwTerminate();
+    }
+
+    static void handleSettingsInput() {
+        if (input.isUpPressed()) {
+            settings.selectUp();
+        }
+        if (input.isDownPressed()) {
+            settings.selectDown();
+        }
+        if (input.isLeftPressed()) {
+            settings.selectLeft();
+        }
+        if (input.isRightPressed()) {
+            settings.selectRight();
+        }
+        if (input.isEnterPressed()) {
+            String selected = settings.getSelectedOption();
+            if ("Back".equals(selected)) {
+                currentState = GameState.MENU;
+            }
+        }
+    }
+
+    static void handleMenuInput() {
+        if (input.isUpPressed()) { // ← Use *Pressed version
+            menu.selectUp();
+        }
+        if (input.isDownPressed()) { // ← Use *Pressed version
+            menu.selectDown();
+        }
+        if (input.isEnterPressed()) { // ← Use *Pressed version
+            String selected = menu.getSelectedOption();
+
+            switch (selected) {
+                case "Play":
+                    startGame();
+                    currentState = GameState.PLAYING;
+                    break;
+
+                case "Settings":
+                    currentState = GameState.SETTINGS;
+                    break;
+                case "Exit":
+                    GLFW.glfwSetWindowShouldClose(window, true);
+                    break;
+            }
+        }
+    }
+
+    static void startGame() {
+        // Initialize game if not already done
+        if (player == null) {
+            world = new World(20, 15);
+            player = new Player(100, 100, world);
+            enemies = new Enemy[] {
+                    new Enemy(200, 150, "ghost1.png", world),
+                    new Enemy(300, 250, "ghost2.png", world),
+                    new Enemy(400, 120, "ghost3.png", world)
+            };
+        }
+    }
+
+    static void updateGame(double delta) {
+        player.update(delta, input);
+        for (Enemy enemy : enemies)
+            enemy.update(delta);
+    }
+
+    static void renderGame() {
+        glClear(GL_COLOR_BUFFER_BIT);
+        world.render();
+        player.render();
+        for (Enemy enemy : enemies)
+            enemy.render();
     }
 }

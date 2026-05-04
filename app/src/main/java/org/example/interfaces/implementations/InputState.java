@@ -32,4 +32,6 @@ public interface InputState {
      * @return true if the right input is active, false otherwise
      */
     boolean isRight();
+
+    boolean isEnter();
 }
