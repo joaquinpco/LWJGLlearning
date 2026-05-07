@@ -48,14 +48,6 @@ public class App {
         settings = new Settings();
         input = new Input(window);
 
-        world = new World(20, 15);
-        player = new Player(100, 100, world);
-        enemies = new Enemy[] {
-                new Enemy(200, 150, "ghost1.png", world),
-                new Enemy(300, 250, "ghost2.png", world),
-                new Enemy(400, 120, "ghost3.png", world)
-        };
-
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(0, 800, 600, 0, -1, 1);
@@ -118,13 +110,13 @@ public class App {
     }
 
     static void handleMenuInput() {
-        if (input.isUpPressed()) { // ← Use *Pressed version
+        if (input.isUpPressed()) {
             menu.selectUp();
         }
-        if (input.isDownPressed()) { // ← Use *Pressed version
+        if (input.isDownPressed()) {
             menu.selectDown();
         }
-        if (input.isEnterPressed()) { // ← Use *Pressed version
+        if (input.isEnterPressed()) {
             String selected = menu.getSelectedOption();
 
             switch (selected) {
