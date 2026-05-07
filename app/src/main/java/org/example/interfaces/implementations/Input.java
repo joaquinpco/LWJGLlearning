@@ -11,6 +11,7 @@ public class Input implements InputState {
     private boolean prevEnter = false;
     private boolean prevLeft = false;
     private boolean prevRight = false;
+    private boolean prevEscape = false;
 
     public Input(long window) {
         this.window = window;
@@ -79,6 +80,13 @@ public class Input implements InputState {
         boolean currentRight = isKeyDown(GLFW.GLFW_KEY_D) || isKeyDown(GLFW.GLFW_KEY_RIGHT);
         boolean pressed = currentRight && !prevRight;
         prevRight = currentRight;
+        return pressed;
+    }
+
+    public boolean isEscapePressed() {
+        boolean currentEscape = isKeyDown(GLFW.GLFW_KEY_ESCAPE);
+        boolean pressed = currentEscape && !prevEscape;
+        prevEscape = currentEscape;
         return pressed;
     }
 }

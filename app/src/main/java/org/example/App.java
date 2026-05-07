@@ -79,6 +79,10 @@ public class App {
                     handleSettingsInput();
                     settings.render();
                     break;
+                case PAUSED:
+                    handlePauseInput();
+                    renderPauseScreen();
+                    break;
             }
 
             org.lwjgl.glfw.GLFW.glfwSwapBuffers(window);
@@ -149,6 +153,10 @@ public class App {
     }
 
     static void updateGame(double delta) {
+        if (input.isEscapePressed()) {
+            currentState = GameState.PAUSED;
+        }
+
         player.update(delta, input);
         for (Enemy enemy : enemies)
             enemy.update(delta);
@@ -161,4 +169,39 @@ public class App {
         for (Enemy enemy : enemies)
             enemy.render();
     }
+
+    static void handlePauseInput() {
+        if (input.isEscapePressed()) {
+            currentState = GameState.PLAYING;
+        }
+    }
+
+    static void renderPauseScreen() {
+        glClear(GL_COLOR_BUFFER_BIT);
+        world.render();
+        player.render();
+        for (Enemy enemy : enemies)
+            enemy.render();
+
+        // Draw semi-transparent overlay and "PAUSED" text
+        renderPauseOverlay();
+    }
+
+    static void renderPauseOverlay() {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Draw a dark overlay
+        glColor4f(0, 0, 0, 0.5f);
+        glBegin(GL_QUADS);
+        glVertex2f(0, 0);
+        glVertex2f(800, 0);
+        glVertex2f(800, 600);
+        glVertex2f(0, 600);
+        glEnd();
+
+        glDisable(GL_BLEND);
+        glColor4f(1, 1, 1, 1); // Reset color to white
+    }
+
 }
