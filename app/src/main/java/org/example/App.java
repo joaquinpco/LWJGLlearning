@@ -14,6 +14,7 @@ import org.example.game.Player;
 import org.example.game.Settings;
 import org.example.game.World;
 import org.example.interfaces.implementations.Input;
+import org.example.render.Font;
 
 public class App {
 
@@ -202,6 +203,12 @@ public class App {
 
         glDisable(GL_BLEND);
         glColor4f(1, 1, 1, 1); // Reset color to white
+
+        // Draw text
+        glDisable(GL_TEXTURE_2D);
+        Font.renderText(300, 250, "PAUSED");
+        Font.renderText(250, 350, "Press ESC to Resume");
+        glEnable(GL_TEXTURE_2D);
     }
 
 }

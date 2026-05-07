@@ -34,4 +34,6 @@ public interface InputState {
     boolean isRight();
 
     boolean isEnter();
+
+    boolean isEscapePressed();
 }
