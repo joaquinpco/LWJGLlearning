@@ -18,7 +18,7 @@ repositories {
 
 
 def lwjglVersion = "3.3.3"
-def lwjglNatives = "natives-macos" // change if needed
+def lwjglNatives = "natives-macos-arm64" // change if needed. For m1 procesors, use "natives-macos-arm64", for windows use "natives-windows", and for linux use "natives-linux"
 
 dependencies {
     // This dependency is used by the application.

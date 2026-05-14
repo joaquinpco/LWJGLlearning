@@ -3,7 +3,7 @@ package org.example.game;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.example.game.Constants.Direction;
-import org.example.interfaces.implementations.Input;
+import org.example.interfaces.implementations.InputState;
 import org.example.render.Texture;
 
 public class Player {
@@ -29,20 +29,25 @@ public class Player {
     private Direction currentDirection = Direction.RIGHT;
 
     public Player(float startX, float startY, World world) {
+        this(startX, startY, world, true);
+    }
+
+    public Player(float startX, float startY, World world, boolean loadTextures) {
         this.world = world;
 
         this.x = startX;
         this.y = startY;
 
-        // Load player texture
-        this.rightText = new Texture("pacmanRigth.png");
-        this.leftText = new Texture("pacmanLeft.png");
-        this.upText = new Texture("pacmanUp.png");
-        this.downText = new Texture("pacmanDown.png");
+        if (loadTextures) {
+            this.rightText = new Texture("pacmanRigth.png");
+            this.leftText = new Texture("pacmanLeft.png");
+            this.upText = new Texture("pacmanUp.png");
+            this.downText = new Texture("pacmanDown.png");
+        }
     }
 
     // Update position using Input
-    public void update(double delta, Input input) {
+    public void update(double delta, InputState input) {
 
         if (input.isUp()) {
             moveIfValid(0, (int) -(speed * delta));
