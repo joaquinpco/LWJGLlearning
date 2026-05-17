@@ -160,7 +160,7 @@ public class App {
 
         player.update(delta, input);
         for (Enemy enemy : enemies)
-            enemy.update(delta);
+            enemy.update(delta, player);
     }
 
     static void renderGame() {

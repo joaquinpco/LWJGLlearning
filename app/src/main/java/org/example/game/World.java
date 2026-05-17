@@ -3,7 +3,7 @@ package org.example.game;
 import org.lwjgl.opengl.GL11;
 
 public class World {
-    private static final int TILE_SIZE = 32;
+    public static final int TILE_SIZE = 32;
     private int width, height;
     private int[][] maze;
 
@@ -49,6 +49,16 @@ public class World {
             return true; // Treat out of bounds as walls
         }
         return maze[tileY][tileX] == 1;
+    }
+
+    public boolean[][] getWalkableGrid() {
+        boolean[][] walkable = new boolean[height][width];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                walkable[y][x] = maze[y][x] == 0;
+            }
+        }
+        return walkable;
     }
 
     public void render() {
