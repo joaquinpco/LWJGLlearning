@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import org.example.audio.AudioClip;
 import org.example.game.Enemy;
 import org.example.game.Menu;
 import org.example.game.Player;
@@ -21,9 +22,13 @@ public class App {
     static Player player;
     static Enemy enemies[];
     static World world;
+
     static Input input;
+
     static Menu menu;
     static Settings settings;
+
+    static AudioClip audioClip;
 
     static long window;
 
@@ -75,6 +80,9 @@ public class App {
                 case PLAYING:
                     updateGame(delta);
                     renderGame();
+                    if(audioClip == null){
+                        startAudioWithConfig(settings);
+                    }
                     break;
                 case SETTINGS:
                     handleSettingsInput();
@@ -83,6 +91,7 @@ public class App {
                 case PAUSED:
                     handlePauseInput();
                     renderPauseScreen();
+                    audioClip.stop();
                     break;
             }
 
@@ -146,9 +155,9 @@ public class App {
             world = new World(20, 15);
             player = new Player(100, 100, world);
             enemies = new Enemy[] {
-                    new Enemy(200, 150, "ghost1.png", world),
-                    new Enemy(300, 250, "ghost2.png", world),
-                    new Enemy(400, 120, "ghost3.png", world)
+                    new Enemy(200, 150, "ghost1.png", world, settings),
+                    new Enemy(300, 250, "ghost2.png", world, settings),
+                    new Enemy(400, 120, "ghost3.png", world, settings)
             };
         }
     }
@@ -186,6 +195,17 @@ public class App {
 
         // Draw semi-transparent overlay and "PAUSED" text
         renderPauseOverlay();
+    }
+
+    static void startAudioWithConfig(Settings settings){
+        try{
+            AudioClip.init();
+            audioClip = new AudioClip("/audio/pacman.wav", settings.getVolume());
+            audioClip.play();
+        }
+        catch(Exception exc){
+            System.out.println(exc.getMessage());
+        }
     }
 
     static void renderPauseOverlay() {

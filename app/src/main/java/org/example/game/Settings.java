@@ -110,6 +110,24 @@ public class Settings {
         return difficulty;
     }
 
+    public float getEnemySpeed() {
+
+    switch (difficulty) {
+
+        case "EASY":
+            return Difficulty.EASY.getEnemySpeed();
+
+        case "MEDIUM":
+            return Difficulty.MEDIUM.getEnemySpeed();
+
+        case "HARD":
+            return Difficulty.HARD.getEnemySpeed();
+
+        default:
+            return 50f;
+    }
+}
+
     public int getVolume() {
         return volume;
     }

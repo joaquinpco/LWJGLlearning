@@ -20,21 +20,30 @@ public class Enemy {
 
     public float x, y;
     public float width = 32, height = 32;
-    public float speed = 50f;
     private float directionX = 1f;
+    private float directionY = 1f;
 
     private World world;
+    private Settings settings;
 
-    public Enemy(float startX, float startY, String spriteName, World world) {
+    public Enemy(float startX, float startY,
+            String spriteName,
+            World world,
+            Settings settings) {
         texture = new Texture(spriteName);
         this.x = startX;
         this.y = startY;
         this.world = world;
+        this.settings = settings;
+
         this.pathFinder = new AStarPathFinder();
     }
 
     public void update(double delta, Player player) {
         List<PathNode> path = getPathToPlayer(player);
+
+        final float speed = this.settings.getEnemySpeed();
+
         if (path.size() > 1) {
             PathNode next = path.get(1);
             int currentTileX = getTileX();
@@ -78,11 +87,25 @@ public class Enemy {
         float newX = x + dx;
         float newY = y + dy;
 
-        if (!checkCollision(newX, newY)) {
-            x = newX;
-            y = newY;
-        } else {
-            directionX *= -1;
+        boolean movedX = true;
+        boolean movedY = true;
+
+        if (dx != 0) {
+            if (!checkCollision(newX, y)) {
+                x = newX;
+            } else {
+                directionX *= -1;
+                movedX = false;
+            }
+        }
+
+        if (dy != 0) {
+            if (!checkCollision(x, newY)) {
+                y = newY;
+            } else {
+                directionY *= -1;
+                movedY = false;
+            }
         }
     }
 
