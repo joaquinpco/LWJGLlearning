@@ -1,8 +1,8 @@
-# 👾 PAC-MAN Game - LWJGL Java Edition
+# PAC-MAN Game - LWJGL Java Edition
 
 A modern reimplementation of the classic PAC-MAN game built with **LWJGL 3.3** (Lightweight Java Game Library) and **OpenGL**. This project serves as both a fully playable game and an educational resource for learning game development with Java.
 
-## 🎮 About the Game
+## About the Game
 
 This is a PAC-MAN game featuring:
 - **Main Menu** with Play, Settings, and Exit options
@@ -16,10 +16,14 @@ This is a PAC-MAN game featuring:
 - Interactive main menu with navigation
 - Settings screen for difficulty and volume control
 - Player movement (WASD or Arrow Keys)
-- Multiple enemy AI characters
+- Multiple enemy AI characters with A* pathfinding algorithm
+- Pause/Resume gameplay with visual overlay (ESC key)
+- Audio pause/resume synchronized with game state
+- Dynamic volume control (0-100%)
 - Texture-based rendering
 - Real-time delta time-based updates
 - Organized game state management (Menu, Settings, Playing, Paused)
+- OpenAL audio system with WAV file support
 
 ## Requirements
 
@@ -55,7 +59,7 @@ If you need to specify a JDK:
 JAVA_HOME=/path/to/jdk ./gradlew :app:run
 ```
 
-## 🎮 Controls
+## Controls
 
 **Main Menu & Settings:**
 - `↑ UP Arrow` or `W` - Move selection up
@@ -69,8 +73,9 @@ JAVA_HOME=/path/to/jdk ./gradlew :app:run
 - `↓ DOWN Arrow` or `S` - Move down
 - `← LEFT Arrow` or `A` - Move left
 - `→ RIGHT Arrow` or `D` - Move right
+- `ESC` - Pause/Resume game and audio
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 lwjgl-project/
@@ -80,9 +85,11 @@ lwjgl-project/
 │   │   ├── Menu.java                      # Main menu screen
 │   │   ├── Settings.java                  # Settings screen
 │   │   ├── Player.java                    # Player character
-│   │   ├── Enemy.java                     # Enemy AI
+│   │   ├── Enemy.java                     # Enemy AI with A* pathfinding
 │   │   ├── World.java                     # Game world
 │   │   └── Constants.java                 # Game constants
+│   ├── audio/
+│   │   └── AudioClip.java                 # Audio management with OpenAL
 │   ├── interfaces/
 │   │   ├── InputState.java                # Input interface
 │   │   └── implementations/
@@ -116,11 +123,13 @@ We welcome contributions! Here's how to help:
 ### Ideas for Contribution
 
 - Improve graphics and visual effects
-- Add sound effects and background music
-- Enhance enemy AI behavior
-- Add power-ups and special abilities
-- Implement score tracking and high scores
-- Add level design system
+- Add sound effects and additional background music tracks
+- Enhance enemy AI with smarter pathfinding strategies
+- Add power-ups and special abilities (speed boost, invincibility, etc.)
+- Implement score tracking and high scores leaderboard
+- Add level design system with multiple maze layouts
+- Implement game over screen and restart functionality
+- Add difficulty scaling and progressive challenges
 - Bug fixes and performance improvements
 
 ## Configuration
@@ -147,9 +156,55 @@ enum GameState {
 
 Recommended package structure for new features:
 - `org.example.game` - Game logic and entities
+- `org.example.audio` - Audio management and playback
 - `org.example.render` - Rendering and graphics
 - `org.example.interfaces` - Input and event handling
 - `org.example.util` - Utility functions and constants
+
+## Game State Management
+
+The game uses a finite state machine with four distinct states:
+
+- **MENU**: Main menu screen with Play, Settings, and Exit options
+- **PLAYING**: Active gameplay with real-time updates
+- **PAUSED**: Game paused with semi-transparent overlay showing pause screen
+- **SETTINGS**: Settings menu for difficulty and volume configuration
+
+State transitions are handled through user input and game logic. The pause state automatically pauses audio playback.
+
+## Audio System
+
+The audio system is built on **OpenAL** and supports WAV file playback:
+
+**Features:**
+- Pause/Resume audio synchronized with game state
+- Dynamic volume control (0-100% adjustable in Settings)
+- Looping audio playback
+- OpenAL initialization and cleanup on game start/exit
+
+**Usage:**
+```java
+// Initialize audio system
+AudioClip.init();
+
+// Load and play audio
+audioClip = new AudioClip("/audio/pacman.wav", volume);
+audioClip.play();
+
+// Pause audio
+audioClip.stop();
+
+// Resume from pause
+audioClip.play();
+
+// Cleanup when done
+AudioClip.destroy();
+```
+
+**Adding Custom Audio:**
+1. Place WAV files in `app/src/main/resources/audio/`
+2. Create AudioClip instance with resource path and volume
+3. Use `play()` and `stop()` methods to control playback
 
 ## Troubleshooting
 
