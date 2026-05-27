@@ -1,4 +1,4 @@
-package org.example.interfaces.implementations;
+package org.example.interfaces;
 
 public interface InputState {
     /**
@@ -33,7 +33,19 @@ public interface InputState {
      */
     boolean isRight();
 
+    /**
+     * Returns true when the "enter" input (Enter/Return key)
+     * is currently active/pressed.
+     *
+     * @return true if the enter input is active, false otherwise
+     */
     boolean isEnter();
 
+    /**
+     * Returns true when the "escape" input (Escape key)
+     * is currently active/pressed.
+     *
+     * @return true if the escape input is active, false otherwise
+     */
     boolean isEscapePressed();
 }

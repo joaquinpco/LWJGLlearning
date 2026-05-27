@@ -3,7 +3,9 @@ package org.example.algorithm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AStarPathFinder {
+import org.example.interfaces.AStar;
+
+public class AStarPathFinder implements AStar{
 
     private static final int[][] DIRECTIONS = {
         {0, -1},
@@ -15,6 +17,7 @@ public class AStarPathFinder {
     public AStarPathFinder() {
     }
 
+    @Override
     public List<PathNode> findPath(PathNode current, PathNode goal, boolean[][] walkable) {
         if (current == null || goal == null || walkable == null || walkable.length == 0) {
             return new ArrayList<>();

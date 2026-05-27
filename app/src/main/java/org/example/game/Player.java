@@ -3,7 +3,7 @@ package org.example.game;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.example.game.Constants.Direction;
-import org.example.interfaces.implementations.InputState;
+import org.example.interfaces.InputState;
 import org.example.render.Texture;
 
 public class Player {
@@ -65,6 +65,9 @@ public class Player {
             moveIfValid((int) (speed * delta), 0);
             this.currentDirection = Constants.Direction.RIGHT;
         }
+
+        //Check whether coins exist. In case that exist, remove
+        collectCoins(world);
     }
 
     // Draw player rectangle
@@ -102,6 +105,16 @@ public class Player {
         if (!checkCollision(newX, newY)) {
             x = newX;
             y = newY;
+        }
+    }
+
+    // Add this method to Player.java
+    public void collectCoins(World world) {
+        float centerX = x + SPRITE_SIZE / 2;
+        float centerY = y + SPRITE_SIZE / 2;
+
+        if (world.hasCoin(centerX, centerY)) {
+            world.collectCoin(centerX, centerY);
         }
     }
 

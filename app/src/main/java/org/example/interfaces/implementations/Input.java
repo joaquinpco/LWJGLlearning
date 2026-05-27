@@ -1,5 +1,6 @@
 package org.example.interfaces.implementations;
 
+import org.example.interfaces.InputState;
 import org.lwjgl.glfw.GLFW;
 
 public class Input implements InputState {
