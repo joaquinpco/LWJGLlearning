@@ -37,6 +37,7 @@ public class App {
     }
 
     static GameState currentState = GameState.MENU;
+    static boolean isAudioPaused = false;
 
     public static void main(String[] args) {
         if (!GLFW.glfwInit()) {
@@ -78,6 +79,10 @@ public class App {
                     break;
 
                 case PLAYING:
+                    if(isAudioPaused && audioClip != null){
+                        audioClip.play();
+                        isAudioPaused = false;
+                    }
                     updateGame(delta);
                     renderGame();
                     if(audioClip == null){
@@ -91,7 +96,10 @@ public class App {
                 case PAUSED:
                     handlePauseInput();
                     renderPauseScreen();
-                    audioClip.stop();
+                    if(audioClip != null && !isAudioPaused){
+                        audioClip.stop();
+                        isAudioPaused = true;
+                    }
                     break;
             }
 
