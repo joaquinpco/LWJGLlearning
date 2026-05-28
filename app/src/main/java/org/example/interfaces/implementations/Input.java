@@ -13,6 +13,7 @@ public class Input implements InputState {
     private boolean prevLeft = false;
     private boolean prevRight = false;
     private boolean prevEscape = false;
+    private boolean keyDown = false;
 
     public Input(long window) {
         this.window = window;
@@ -25,12 +26,12 @@ public class Input implements InputState {
     // Continuous key state for GAME (hold down = continuous)
     @Override
     public boolean isUp() {
-        return isKeyDown(GLFW.GLFW_KEY_W) || isKeyDown(GLFW.GLFW_KEY_UP);
+        return (isKeyDown(GLFW.GLFW_KEY_W) || isKeyDown(GLFW.GLFW_KEY_UP)) && !isLeft() && !isRight();
     }
 
     @Override
     public boolean isDown() {
-        return isKeyDown(GLFW.GLFW_KEY_S) || isKeyDown(GLFW.GLFW_KEY_DOWN);
+        return (isKeyDown(GLFW.GLFW_KEY_S) || isKeyDown(GLFW.GLFW_KEY_DOWN)) && !isLeft() && !isRight();
     }
 
     @Override
