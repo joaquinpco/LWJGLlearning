@@ -39,6 +39,8 @@ public class App {
     static GameState currentState = GameState.MENU;
     static boolean isAudioPaused = false;
 
+    public static int score = 0;
+
     public static void main(String[] args) {
         if (!GLFW.glfwInit()) {
             throw new IllegalStateException("GLFW init failed");
@@ -184,6 +186,12 @@ public class App {
         glClear(GL_COLOR_BUFFER_BIT);
         world.render();
         player.render();
+
+        glDisable(GL_TEXTURE_2D);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        Font.renderText(10, 20, "Score: " +score);
+        glEnable(GL_TEXTURE_2D);
+
         for (Enemy enemy : enemies)
             enemy.render();
     }

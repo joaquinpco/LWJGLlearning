@@ -1,5 +1,6 @@
 package org.example.game;
 
+import org.example.App;
 import org.lwjgl.opengl.GL11;
 
 public class World {
@@ -88,6 +89,7 @@ public class World {
         int tileY = (int) (y / TILE_SIZE);
         if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
             coins[tileY][tileX] = false;
+            App.score += 10;
         }
     }
 
