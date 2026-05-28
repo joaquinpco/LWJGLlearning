@@ -1,6 +1,7 @@
 package org.example.game;
 
 import org.example.App;
+import org.example.audio.AudioClip;
 import org.lwjgl.opengl.GL11;
 
 public class World {
@@ -47,9 +48,9 @@ public class World {
     }
 
     private void generateCoins() {
-        for(int y = 1; y < height - 1; y++){
-            for(int x = 1;x < width - 1; x++){
-                if(maze[y][x] == 0 && x % 2 == 0) {
+        for (int y = 1; y < height - 1; y++) {
+            for (int x = 1; x < width - 1; x++) {
+                if (maze[y][x] == 0 && x % 2 == 0) {
                     coins[y][x] = true;
                 }
             }
@@ -90,6 +91,14 @@ public class World {
         if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
             coins[tileY][tileX] = false;
             App.score += 10;
+
+            // Play collected coin
+            try {
+                AudioClip audioClip = new AudioClip("/audio/collected_coin.wav", App.settings.getVolume(), false);
+                audioClip.play();
+            } catch (Exception exc) {
+                System.out.println(exc.getMessage());
+            }
         }
     }
 
@@ -106,20 +115,18 @@ public class World {
                     GL11.glVertex2f((x + 1) * TILE_SIZE, (y + 1) * TILE_SIZE);
                     GL11.glVertex2f(x * TILE_SIZE, (y + 1) * TILE_SIZE);
                     GL11.glEnd();
-                }
-                else if(coins[y][x]){
-                    //Rendering coins as a small yellow circle
-                    GL11.glColor3f(1.0f, 1.0f, 0.0f); //Yellow
+                } else if (coins[y][x]) {
+                    // Rendering coins as a small yellow circle
+                    GL11.glColor3f(1.0f, 1.0f, 0.0f); // Yellow
                     float centerX = (x + 0.5f) * TILE_SIZE;
                     float centerY = (y + 0.5f) * TILE_SIZE;
                     float radius = 4.0f;
                     GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-                    for(int i = 1; i <= 8; i++){
-                        float angle = (float)(2 * Math.PI * i / 8);
+                    for (int i = 1; i <= 8; i++) {
+                        float angle = (float) (2 * Math.PI * i / 8);
                         GL11.glVertex2d(
-                            centerX + radius * (float) Math.cos(angle) , 
-                            centerY + radius * (float) Math.sin(angle)
-                        );
+                                centerX + radius * (float) Math.cos(angle),
+                                centerY + radius * (float) Math.sin(angle));
                     }
                     GL11.glEnd();
                 }

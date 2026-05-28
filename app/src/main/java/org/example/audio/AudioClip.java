@@ -46,7 +46,7 @@ public class AudioClip {
      *
      * @param path Path to the audio file inside resources
      */
-    public AudioClip(String path, float volume) throws Exception {
+    public AudioClip(String path, float volume, boolean isBackgroundSong) throws Exception {
 
         // Load file from resources
         InputStream is = AudioClip.class.getResourceAsStream(path);
@@ -120,8 +120,9 @@ public class AudioClip {
         // Attach buffer to source
         alSourcei(source, AL_BUFFER, buffer);
 
-        // Loop while finishing. Due to is the same song
-        alSourcei(source, AL_LOOPING, AL_TRUE);
+        // Loop while finishing in case of background song. Due to is the same song
+        if(isBackgroundSong)
+            alSourcei(source, AL_LOOPING, AL_TRUE);
 
         // Volume
         alSourcef(source, AL_GAIN, volume / 100.0f);

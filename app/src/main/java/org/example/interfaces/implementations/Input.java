@@ -13,7 +13,6 @@ public class Input implements InputState {
     private boolean prevLeft = false;
     private boolean prevRight = false;
     private boolean prevEscape = false;
-    private boolean keyDown = false;
 
     public Input(long window) {
         this.window = window;

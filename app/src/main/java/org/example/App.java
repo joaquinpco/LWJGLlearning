@@ -26,7 +26,7 @@ public class App {
     static Input input;
 
     static Menu menu;
-    static Settings settings;
+    public static Settings settings;
 
     static AudioClip audioClip;
 
@@ -215,8 +215,9 @@ public class App {
 
     static void startAudioWithConfig(Settings settings){
         try{
+            Boolean isBackgroundSong = true;
             AudioClip.init();
-            audioClip = new AudioClip("/audio/pacman.wav", settings.getVolume());
+            audioClip = new AudioClip("/audio/pacman.wav", (float)(settings.getVolume() - settings.getVolume() * 0.5), isBackgroundSong);
             audioClip.play();
         }
         catch(Exception exc){
