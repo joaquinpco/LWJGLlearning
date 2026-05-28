@@ -20,9 +20,6 @@ public class Enemy {
 
     public float x, y;
     public float width = 32, height = 32;
-    private float directionX = 1f;
-    private float directionY = 1f;
-
     private World world;
     private Settings settings;
 
@@ -94,18 +91,14 @@ public class Enemy {
             if (!checkCollision(newX, y)) {
                 x = newX;
                 moved = true;
-            } else {
-                directionX *= -1;
-            }
+            } 
         }
 
         if (dy != 0) {
             if (!checkCollision(x, newY)) {
                 y = newY;
                 moved = true;
-            } else {
-                directionY *= -1;
-            }
+            } 
         }
         return moved;
     }
