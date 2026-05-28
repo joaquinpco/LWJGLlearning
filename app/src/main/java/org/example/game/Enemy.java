@@ -52,13 +52,14 @@ public class Enemy {
             int dyTile = next.getY() - currentTileY;
             float dx = dxTile * speed * (float) delta;
             float dy = dyTile * speed * (float) delta;
-            moveIfValid(dx, dy);
-        } else {
-            float dx = (float) (directionX * speed * delta);
-            if (Math.random() < 0.01) {
-                dx = -dx;
+
+            boolean moved = moveIfValid(dx, dy);
+
+            if (!moved) {
+                // Snap to center of current tile so next pathfind starts clean
+                x = currentTileX * World.TILE_SIZE + (World.TILE_SIZE - width) / 2f;
+                y = currentTileY * World.TILE_SIZE + (World.TILE_SIZE - height) / 2f;
             }
-            moveIfValid(dx, 0);
         }
     }
 
@@ -83,30 +84,30 @@ public class Enemy {
         glEnd();
     }
 
-    private void moveIfValid(float dx, float dy) {
+    private boolean moveIfValid(float dx, float dy) {
         float newX = x + dx;
         float newY = y + dy;
 
-        boolean movedX = true;
-        boolean movedY = true;
+        boolean moved = false;
 
         if (dx != 0) {
             if (!checkCollision(newX, y)) {
                 x = newX;
+                moved = true;
             } else {
                 directionX *= -1;
-                movedX = false;
             }
         }
 
         if (dy != 0) {
             if (!checkCollision(x, newY)) {
                 y = newY;
+                moved = true;
             } else {
                 directionY *= -1;
-                movedY = false;
             }
         }
+        return moved;
     }
 
     private boolean checkCollision(float x, float y) {
