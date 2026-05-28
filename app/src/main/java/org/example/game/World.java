@@ -74,7 +74,7 @@ public class World {
         return walkable;
     }
 
-    public boolean hasCoin(float x, float y) {  // Add this method
+    public boolean hasCoin(float x, float y) {
         int tileX = (int) (x / TILE_SIZE);
         int tileY = (int) (y / TILE_SIZE);
         if (tileX < 0 || tileX >= width || tileY < 0 || tileY >= height) {
@@ -83,7 +83,7 @@ public class World {
         return coins[tileY][tileX];
     }
 
-    public void collectCoin(float x, float y) {  // Add this method
+    public void collectCoin(float x, float y) {
         int tileX = (int) (x / TILE_SIZE);
         int tileY = (int) (y / TILE_SIZE);
         if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
