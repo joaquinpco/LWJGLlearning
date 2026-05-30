@@ -8,6 +8,7 @@ This is a PAC-MAN game featuring:
 - **Main Menu** with Play, Settings, and Exit options
 - **Settings Screen** to adjust difficulty (Easy/Medium/Hard) and volume
 - **Gameplay** with player-controlled character, AI enemies (ghosts), and collision detection
+ - **Gameplay** with player-controlled character, AI enemies (ghosts), collectible coins, scoring, and collision detection
 - **Real-time rendering** using OpenGL with a 2D orthographic projection
 - **Input handling** for smooth keyboard-based movement
 
@@ -16,7 +17,7 @@ This is a PAC-MAN game featuring:
 - Interactive main menu with navigation
 - Settings screen for difficulty and volume control
 - Player movement (WASD or Arrow Keys)
-- Multiple enemy AI characters with A* pathfinding algorithm
+- Multiple enemy AI characters with A* pathfinding algorithm and dynamic spawning
 - Pause/Resume gameplay with visual overlay (ESC key)
 - Audio pause/resume synchronized with game state
 - Dynamic volume control (0-100%)
@@ -24,6 +25,13 @@ This is a PAC-MAN game featuring:
 - Real-time delta time-based updates
 - Organized game state management (Menu, Settings, Playing, Paused)
 - OpenAL audio system with WAV file support
+
+New features (recent additions):
+
+- Coin placement and collection: the world now places coins on empty tiles. The player collects coins by moving over them; coins are rendered as small yellow circles.
+- Scoring: collected coins increase the global score displayed during gameplay.
+- Dynamic enemies: the game spawns a random number of enemies each round and assigns random starting positions and sprites.
+- Improved enemy behavior: enemies use A* pathfinding and include simple collision handling to avoid getting stuck on walls.
 
 ## Requirements
 
@@ -75,6 +83,11 @@ JAVA_HOME=/path/to/jdk ./gradlew :app:run
 - `→ RIGHT Arrow` or `D` - Move right
 - `ESC` - Pause/Resume game and audio
 
+Additional gameplay notes:
+
+- Coins award points (default +10 per coin). The current score is shown in the top-left corner during play.
+- Enemy spawn count and behavior can be adjusted in `App.java` (see `createEnemiesDynamically()` if present) and in `Settings` for difficulty.
+
 ## Project Structure
 
 ```
@@ -86,7 +99,7 @@ lwjgl-project/
 │   │   ├── Settings.java                  # Settings screen
 │   │   ├── Player.java                    # Player character
 │   │   ├── Enemy.java                     # Enemy AI with A* pathfinding
-│   │   ├── World.java                     # Game world
+│   │   ├── World.java                     # Game world (maze, coins, rendering)
 │   │   └── Constants.java                 # Game constants
 │   ├── audio/
 │   │   └── AudioClip.java                 # Audio management with OpenAL
@@ -160,6 +173,8 @@ Recommended package structure for new features:
 - `org.example.render` - Rendering and graphics
 - `org.example.interfaces` - Input and event handling
 - `org.example.util` - Utility functions and constants
+
+If you add features that change the public API or runtime behavior (for example: coin values, spawn ranges, or tile size), please document configuration options in `Settings.java` and update this README so users can tune gameplay without editing sources.
 
 ## Game State Management
 
