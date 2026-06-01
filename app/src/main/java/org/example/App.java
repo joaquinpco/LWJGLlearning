@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.IntBuffer;
+
 import org.example.audio.AudioClip;
 import org.example.game.Enemy;
 import org.example.game.Menu;
@@ -31,6 +33,9 @@ public class App {
     static AudioClip audioClip;
 
     static long window;
+
+    static int windowWidth;
+    static int windowHeight;
 
     enum GameState {
         MENU, PLAYING, PAUSED, SETTINGS, GAME_OVER
@@ -57,9 +62,22 @@ public class App {
         settings = new Settings();
         input = new Input(window);
 
+        int[] windowW = new int[1];
+        int[] windowH = new int[1];
+        int[] fbW = new int[1];
+        int[] fbH = new int[1];
+
+        GLFW.glfwGetWindowSize(window, windowW, windowH);
+        GLFW.glfwGetFramebufferSize(window, fbW, fbH);
+
+        windowWidth = windowW[0];
+        windowHeight = windowH[0];
+
+        glViewport(0, 0, fbW[0], fbH[0]);
+
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, 800, 600, 0, -1, 1);
+        glOrtho(0, windowWidth, windowHeight, 0, -1, 1);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glDisable(GL_DEPTH_TEST);
@@ -167,12 +185,34 @@ public class App {
     static void startGame() {
         // Initialize game if not already done
         if (player == null) {
-            world = new World(20, 15);
-            player = new Player(100, 100, world);
+            int[] width = new int[1];
+            int[] height = new int[1];
+
+            GLFW.glfwGetFramebufferSize(window, width, height);
+
+            int cols = Math.max(10, windowWidth / World.TILE_SIZE);
+            int rows = Math.max(8, windowHeight / World.TILE_SIZE);
+
+            world = new World(cols, rows);
+            float centerOffset = (World.TILE_SIZE - 32) / 2f;
+            player = new Player(
+                    World.TILE_SIZE + centerOffset,
+                    World.TILE_SIZE + centerOffset,
+                    world);
+
             enemies = new Enemy[] {
-                    new Enemy(200, 150, "ghost1.png", world, settings),
-                    new Enemy(300, 250, "ghost2.png", world, settings),
-                    new Enemy(400, 120, "ghost3.png", world, settings)
+                    new Enemy(
+                            (cols - 2) * World.TILE_SIZE + centerOffset,
+                            (rows - 2) * World.TILE_SIZE + centerOffset,
+                            "ghost1.png", world, settings),
+                    new Enemy(
+                            (cols / 2) * World.TILE_SIZE + centerOffset,
+                            (rows / 2) * World.TILE_SIZE + centerOffset,
+                            "ghost2.png", world, settings),
+                    new Enemy(
+                            (cols - 2) * World.TILE_SIZE + centerOffset,
+                            World.TILE_SIZE + centerOffset,
+                            "ghost3.png", world, settings)
             };
         }
     }
@@ -251,9 +291,9 @@ public class App {
         glColor4f(0, 0, 0, 0.5f);
         glBegin(GL_QUADS);
         glVertex2f(0, 0);
-        glVertex2f(800, 0);
-        glVertex2f(800, 600);
-        glVertex2f(0, 600);
+        glVertex2f(windowWidth, 0);
+        glVertex2f(windowWidth, windowHeight);
+        glVertex2f(0, windowHeight);
         glEnd();
 
         glDisable(GL_BLEND);
@@ -279,7 +319,7 @@ public class App {
             for (Enemy enemy : enemies)
                 enemy.render();
 
-        if(audioClip != null){
+        if (audioClip != null) {
             audioClip.cleanUp();
             audioClip = null;
         }
@@ -292,9 +332,9 @@ public class App {
         glColor4f(0, 0, 0, 0.7f);
         glBegin(GL_QUADS);
         glVertex2f(0, 0);
-        glVertex2f(800, 0);
-        glVertex2f(800, 600);
-        glVertex2f(0, 600);
+        glVertex2f(windowWidth, 0);
+        glVertex2f(windowWidth, windowHeight);
+        glVertex2f(0, windowHeight);
         glEnd();
 
         glDisable(GL_BLEND);
