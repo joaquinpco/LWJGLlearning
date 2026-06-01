@@ -10,6 +10,8 @@ public class World {
     private int[][] maze;
     private boolean[][] coins;
 
+    private AudioClip audioClip;
+
     public World(int width, int height) {
         this.width = width;
         this.height = height;
@@ -94,11 +96,18 @@ public class World {
 
             // Play collected coin
             try {
-                AudioClip audioClip = new AudioClip("/audio/collected_coin.wav", App.settings.getVolume(), false);
+                audioClip = new AudioClip("/audio/collected_coin.wav", App.settings.getVolume(), false);
                 audioClip.play();
             } catch (Exception exc) {
                 System.out.println(exc.getMessage());
             }
+        }
+    }
+
+    public void updateAudio() {
+        if (audioClip != null && !audioClip.isPlaying()) {
+            audioClip.cleanUp();
+            audioClip = null;
         }
     }
 

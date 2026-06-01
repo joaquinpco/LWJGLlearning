@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.example.game.Player;
 import org.example.game.World;
-import org.example.interfaces.implementations.InputState;
+import org.example.interfaces.InputState;
 
 class PlayerTest {
     private World world = new World(20, 15);
@@ -26,18 +26,37 @@ class PlayerTest {
         float initialX = player.x;
 
         InputState input = new InputState() {
+
             @Override
-            public boolean isUp() { return false; }
+            public boolean isUp() {
+                return false;
+            }
+
             @Override
-            public boolean isDown() { return false; }
+            public boolean isDown() {
+                return false;
+            }
+
             @Override
-            public boolean isLeft() { return false; }
+            public boolean isLeft() {
+                return false;
+            }
+
             @Override
-            public boolean isRight() { return true; }
+            public boolean isRight() {
+                return true;
+            }
+
             @Override
-            public boolean isEnter() { return false; }
+            public boolean isEnter() {
+                return false;
+            }
+
             @Override
-            public boolean isEscapePressed() { return false; }
+            public boolean isEscapePressed() {
+                return false;
+            }
+            
         };
         player.update(1.0, input); // Simulate movement for 1 second
 

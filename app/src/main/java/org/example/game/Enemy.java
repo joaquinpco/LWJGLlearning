@@ -91,14 +91,14 @@ public class Enemy {
             if (!checkCollision(newX, y)) {
                 x = newX;
                 moved = true;
-            } 
+            }
         }
 
         if (dy != 0) {
             if (!checkCollision(x, newY)) {
                 y = newY;
                 moved = true;
-            } 
+            }
         }
         return moved;
     }
@@ -113,6 +113,19 @@ public class Enemy {
                 || world.isWall(centerX - radius, centerY + radius)
                 || world.isWall(centerX + radius, centerY + radius)
                 || world.isWall(centerX, centerY);
+    }
+
+    public boolean checkCollisionWithPlayer(Player player) {
+        float enemyCenter_X = x + width / 2;
+        float enemyCenter_Y = y + height / 2;
+        float playerCenter_X = player.x + player.width / 2;
+        float playerCenter_Y = player.y + player.height / 2;
+
+        float distance = (float) Math.sqrt(
+                Math.pow(enemyCenter_X - playerCenter_X, 2) +
+                        Math.pow(enemyCenter_Y - playerCenter_Y, 2));
+
+        return distance < 25;
     }
 
     private int getTileX() {

@@ -144,6 +144,10 @@ public class AudioClip {
         alDeleteBuffers(buffer);
     }
 
+    public boolean isPlaying(){
+        return alGetSourcei(source, AL_SOURCE_STATE) == AL_PLAYING;
+    }
+
     /**
      * Shuts down OpenAL.
      * Must be called when the game closes.

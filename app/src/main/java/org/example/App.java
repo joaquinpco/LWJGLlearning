@@ -33,7 +33,7 @@ public class App {
     static long window;
 
     enum GameState {
-        MENU, PLAYING, PAUSED, SETTINGS
+        MENU, PLAYING, PAUSED, SETTINGS, GAME_OVER
     }
 
     static GameState currentState = GameState.MENU;
@@ -81,13 +81,13 @@ public class App {
                     break;
 
                 case PLAYING:
-                    if(isAudioPaused && audioClip != null){
+                    if (isAudioPaused && audioClip != null) {
                         audioClip.play();
                         isAudioPaused = false;
                     }
                     updateGame(delta);
                     renderGame();
-                    if(audioClip == null){
+                    if (audioClip == null) {
                         startAudioWithConfig(settings);
                     }
                     break;
@@ -98,10 +98,14 @@ public class App {
                 case PAUSED:
                     handlePauseInput();
                     renderPauseScreen();
-                    if(audioClip != null && !isAudioPaused){
+                    if (audioClip != null && !isAudioPaused) {
                         audioClip.stop();
                         isAudioPaused = true;
                     }
+                    break;
+                case GAME_OVER:
+                    handleGameOverInput();
+                    renderGameOverScreen();
                     break;
             }
 
@@ -109,6 +113,7 @@ public class App {
             org.lwjgl.glfw.GLFW.glfwPollEvents();
         }
 
+        AudioClip.destroy();
         GLFW.glfwTerminate();
     }
 
@@ -185,15 +190,20 @@ public class App {
     static void renderGame() {
         glClear(GL_COLOR_BUFFER_BIT);
         world.render();
+        world.updateAudio();
         player.render();
 
         glDisable(GL_TEXTURE_2D);
         glColor3f(1.0f, 1.0f, 1.0f);
-        Font.renderText(10, 20, "Score: " +score);
+        Font.renderText(10, 20, "Score: " + score);
         glEnable(GL_TEXTURE_2D);
 
-        for (Enemy enemy : enemies)
+        for (Enemy enemy : enemies) {
             enemy.render();
+            if (enemy.checkCollisionWithPlayer(player)) {
+                currentState = GameState.GAME_OVER;
+            }
+        }
     }
 
     static void handlePauseInput() {
@@ -213,15 +223,23 @@ public class App {
         renderPauseOverlay();
     }
 
-    static void startAudioWithConfig(Settings settings){
-        try{
+    static void startAudioWithConfig(Settings settings) {
+        try {
             Boolean isBackgroundSong = true;
             AudioClip.init();
-            audioClip = new AudioClip("/audio/pacman.wav", (float)(settings.getVolume() - settings.getVolume() * 0.5), isBackgroundSong);
+            audioClip = new AudioClip("/audio/pacman.wav", (float) (settings.getVolume() - settings.getVolume() * 0.5),
+                    isBackgroundSong);
             audioClip.play();
-        }
-        catch(Exception exc){
+        } catch (Exception exc) {
             System.out.println(exc.getMessage());
+        }
+    }
+
+    static void handleGameOverInput() {
+        if (input.isEnterPressed()) {
+            score = 0;
+            player = null;
+            currentState = GameState.MENU;
         }
     }
 
@@ -245,6 +263,48 @@ public class App {
         glDisable(GL_TEXTURE_2D);
         Font.renderText(300, 250, "PAUSED");
         Font.renderText(250, 350, "Press ESC to Resume");
+        glEnable(GL_TEXTURE_2D);
+    }
+
+    static void renderGameOverScreen() {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        if (world != null)
+            world.render();
+
+        if (player != null)
+            player.render();
+
+        if (enemies != null)
+            for (Enemy enemy : enemies)
+                enemy.render();
+
+        if(audioClip != null){
+            audioClip.cleanUp();
+            audioClip = null;
+        }
+
+        // Draw overlay and game over message
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Draw a dark overlay
+        glColor4f(0, 0, 0, 0.7f);
+        glBegin(GL_QUADS);
+        glVertex2f(0, 0);
+        glVertex2f(800, 0);
+        glVertex2f(800, 600);
+        glVertex2f(0, 600);
+        glEnd();
+
+        glDisable(GL_BLEND);
+        glColor4f(1, 1, 1, 1);
+
+        // Draw text
+        glDisable(GL_TEXTURE_2D);
+        Font.renderText(280, 200, "GAME OVER");
+        Font.renderText(250, 300, "Final Score: " + score);
+        Font.renderText(200, 400, "Press ENTER to return to Menu");
         glEnable(GL_TEXTURE_2D);
     }
 
