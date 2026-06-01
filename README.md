@@ -1,43 +1,35 @@
 # PAC-MAN Game - LWJGL Java Edition
 
-A modern reimplementation of the classic PAC-MAN game built with **LWJGL 3.3** (Lightweight Java Game Library) and **OpenGL**. This project serves as both a fully playable game and an educational resource for learning game development with Java.
+A modern Java reimplementation of the classic PAC-MAN game using **LWJGL 3** and **OpenGL**. The project is both playable and intended as a learning resource for Java game development.
 
 ## About the Game
 
-This is a PAC-MAN game featuring:
+This PAC-MAN game includes:
 - **Main Menu** with Play, Settings, and Exit options
-- **Settings Screen** to adjust difficulty (Easy/Medium/Hard) and volume
-- **Gameplay** with player-controlled character, AI enemies (ghosts), and collision detection
- - **Gameplay** with player-controlled character, AI enemies (ghosts), collectible coins, scoring, and collision detection
-- **Real-time rendering** using OpenGL with a 2D orthographic projection
-- **Input handling** for smooth keyboard-based movement
+- **Settings Screen** for difficulty and volume control
+- **Gameplay** with player movement, AI enemies, collectible coins, scoring, and collision detection
+- **OpenGL rendering** using a 2D orthographic projection
+- **Keyboard input handling** for smooth movement and menu navigation
+- **Dynamic world sizing** based on the current window dimensions
 
 ## Features
 
-- Interactive main menu with navigation
-- Settings screen for difficulty and volume control
-- Player movement (WASD or Arrow Keys)
-- Multiple enemy AI characters with A* pathfinding algorithm and dynamic spawning
-- Pause/Resume gameplay with visual overlay (ESC key)
-- Audio pause/resume synchronized with game state
-- Dynamic volume control (0-100%)
-- Texture-based rendering
-- Real-time delta time-based updates
-- Organized game state management (Menu, Settings, Playing, Paused)
-- OpenAL audio system with WAV file support
-
-New features (recent additions):
-
-- Coin placement and collection: the world now places coins on empty tiles. The player collects coins by moving over them; coins are rendered as small yellow circles.
-- Scoring: collected coins increase the global score displayed during gameplay.
-- Dynamic enemies: the game spawns a random number of enemies each round and assigns random starting positions and sprites.
-- Improved enemy behavior: enemies use A* pathfinding and include simple collision handling to avoid getting stuck on walls.
+- Interactive main menu and settings menu
+- Player movement using arrow keys or WASD
+- Multiple ghost enemies using A* pathfinding
+- Dynamic world resizing to fit the current window
+- Coin placement and collection on empty tiles
+- Score tracked in real time and displayed during gameplay
+- Pause/resume functionality with overlay screen
+- Background music and sound effects via OpenAL
+- Settings-based volume and difficulty control
+- Game over screen with final score display
 
 ## Requirements
 
-- **Java JDK:** 17 or newer (LTS preferred)
+- **Java JDK:** 17 or newer
 - **Gradle:** Included via Gradle wrapper (`./gradlew`)
-- **OS:** macOS, Linux, or Windows with OpenGL 2.0+ support
+- **OS:** macOS, Linux, or Windows with OpenGL support
 - **Native Libraries:** Automatically downloaded by Gradle
 
 ## Installation
@@ -46,7 +38,7 @@ Clone the repository:
 
 ```bash
 git clone <repository-url>
-cd lwjgl-project
+cd LWJGLlearning
 ```
 
 Build the project:
@@ -69,95 +61,99 @@ JAVA_HOME=/path/to/jdk ./gradlew :app:run
 
 ## Controls
 
-**Main Menu & Settings:**
-- `↑ UP Arrow` or `W` - Move selection up
-- `↓ DOWN Arrow` or `S` - Move selection down
-- `← LEFT Arrow` or `A` - Decrease setting value
-- `→ RIGHT Arrow` or `D` - Increase setting value
+**Menu & Settings:**
+- `↑` or `W` - Move selection up
+- `↓` or `S` - Move selection down
+- `←` or `A` - Decrease setting value
+- `→` or `D` - Increase setting value
 - `ENTER` - Confirm selection
 
 **Gameplay:**
-- `↑ UP Arrow` or `W` - Move up
-- `↓ DOWN Arrow` or `S` - Move down
-- `← LEFT Arrow` or `A` - Move left
-- `→ RIGHT Arrow` or `D` - Move right
+- `↑` or `W` - Move up
+- `↓` or `S` - Move down
+- `←` or `A` - Move left
+- `→` or `D` - Move right
 - `ESC` - Pause/Resume game and audio
 
-Additional gameplay notes:
-
-- Coins award points (default +10 per coin). The current score is shown in the top-left corner during play.
-- Enemy spawn count and behavior can be adjusted in `App.java` (see `createEnemiesDynamically()` if present) and in `Settings` for difficulty.
+Additional notes:
+- Coins add points (default +10 per coin).
+- Score appears in the top-left corner while playing.
 
 ## Project Structure
 
 ```
-lwjgl-project/
+LWJGLlearning/
 ├── app/src/main/java/org/example/
-│   ├── App.java                           # Main entry point
-│   ├── game/
-│   │   ├── Menu.java                      # Main menu screen
-│   │   ├── Settings.java                  # Settings screen
-│   │   ├── Player.java                    # Player character
-│   │   ├── Enemy.java                     # Enemy AI with A* pathfinding
-│   │   ├── World.java                     # Game world (maze, coins, rendering)
-│   │   └── Constants.java                 # Game constants
+│   ├── App.java                        # Main entry point and game state manager
 │   ├── audio/
-│   │   └── AudioClip.java                 # Audio management with OpenAL
+│   │   └── AudioClip.java              # Audio playback and OpenAL handling
+│   ├── game/
+│   │   ├── Enemy.java                  # Enemy AI and movement
+│   │   ├── Menu.java                   # Menu rendering and navigation
+│   │   ├── Player.java                 # Player movement and coin collection
+│   │   ├── Settings.java               # Settings menu logic
+│   │   ├── World.java                  # Maze, coins, rendering, and world logic
+│   │   └── Difficulty.java             # Difficulty configuration
 │   ├── interfaces/
-│   │   ├── InputState.java                # Input interface
+│   │   ├── InputState.java             # Input contract interface
 │   │   └── implementations/
-│   │       ├── Input.java                 # Input handler
-│   │       └── InputState.java
+│   │       └── Input.java              # Keyboard input implementation
 │   └── render/
-│       ├── Font.java                      # Font rendering
-│       └── Texture.java                   # Texture handling
-├── build.gradle                           # Gradle configuration
-└── README.md                              # This file
+│       ├── Font.java                   # Font rendering helper
+│       └── Texture.java                # Texture loading and rendering
+├── build.gradle                        # Gradle build configuration
+├── gradle/                             # Gradle wrapper files
+└── README.md                           # Project documentation
 ```
+
+## Recent Additions
+
+- **Window-based world sizing** so the maze fits the current window dimensions
+- **Dynamic coin spawning** on available tiles
+- **Audio lifecycle fixes** so music and sound effects pause/resume cleanly
+- **Game over flow** with score persistence and return to menu
+- **Player/enemy collision detection** and game-over handling
 
 ## Contributing
 
-We welcome contributions! Here's how to help:
+Contributions are welcome! To contribute:
 
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/your-feature`
-3. **Make** your changes and commit: `git commit -m "Add your feature"`
-4. **Push** to your fork: `git push origin feature/your-feature`
-5. **Submit** a Pull Request with a clear description
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Make your changes and commit them
+4. Push to your fork: `git push origin feature/your-feature`
+5. Open a Pull Request with a description
 
-### Contribution Guidelines
+### Guidelines
 
-- Follow the existing code style and package structure
-- Add comments for complex logic
-- Keep commits focused and descriptive
-- Test your changes before submitting a PR
-- Update documentation if needed
+- Keep the code style consistent
+- Add comments for non-obvious logic
+- Keep commits focused
+- Test before submitting
+- Update documentation when needed
 
-### Ideas for Contribution
+### Contribution ideas
 
-- Improve graphics and visual effects
-- Add sound effects and additional background music tracks
-- Enhance enemy AI with smarter pathfinding strategies
-- Add power-ups and special abilities (speed boost, invincibility, etc.)
-- Implement score tracking and high scores leaderboard
-- Add level design system with multiple maze layouts
-- Implement game over screen and restart functionality
-- Add difficulty scaling and progressive challenges
-- Bug fixes and performance improvements
+- Better graphics and visual polish
+- More sound effects and music tracks
+- Smarter enemy AI and maze behavior
+- Power-ups and level progression
+- Scoreboards and high-score saving
+- Multiple maze layouts or levels
 
 ## Configuration
 
-### Changing Window Settings
+### Window settings
 
-Edit `App.java` to modify window properties:
+Modify the window creation in `App.java`:
 
 ```java
 window = GLFW.glfwCreateWindow(800, 600, "PAC-MAN", 0, 0);
 ```
 
-### Adding New Game States
+### GameState
 
-Extend the `GameState` enum in `App.java`:
+The current game states are defined in `App.java`:
 
 ```java
 enum GameState {
@@ -165,71 +161,69 @@ enum GameState {
 }
 ```
 
-### Package Organization
+### Package organization
 
-Recommended package structure for new features:
-- `org.example.game` - Game logic and entities
-- `org.example.audio` - Audio management and playback
-- `org.example.render` - Rendering and graphics
-- `org.example.interfaces` - Input and event handling
-- `org.example.util` - Utility functions and constants
+Recommended package layout for new features:
+- `org.example.game` - game logic and entities
+- `org.example.audio` - audio management
+- `org.example.render` - rendering helpers
+- `org.example.interfaces` - input contracts
+- `org.example.util` - utility classes
 
-If you add features that change the public API or runtime behavior (for example: coin values, spawn ranges, or tile size), please document configuration options in `Settings.java` and update this README so users can tune gameplay without editing sources.
+If you add new gameplay options, document them in `Settings.java` and update this README.
 
-## Game State Management
+## Audio
 
-The game uses a finite state machine with four distinct states:
+The audio system is built on **OpenAL** and currently supports WAV playback.
 
-- **MENU**: Main menu screen with Play, Settings, and Exit options
-- **PLAYING**: Active gameplay with real-time updates
-- **PAUSED**: Game paused with semi-transparent overlay showing pause screen
-- **SETTINGS**: Settings menu for difficulty and volume configuration
+**Audio features:**
+- Pause/resume with game state
+- Volume control
+- Background music and sound effects
+- OpenAL initialization and cleanup at app exit
 
-State transitions are handled through user input and game logic. The pause state automatically pauses audio playback.
+## Notes
 
-## Audio System
+The game now adjusts the maze size based on the window dimensions, so it should fit better on different screen sizes. If walls or tiles appear too large, change `World.TILE_SIZE` in `World.java`.
 
-The audio system is built on **OpenAL** and supports WAV file playback:
+## Running Tests
 
-**Features:**
-- Pause/Resume audio synchronized with game state
-- Dynamic volume control (0-100% adjustable in Settings)
-- Looping audio playback
-- OpenAL initialization and cleanup on game start/exit
+Run the test suite with:
 
-**Usage:**
-```java
-// Initialize audio system
-AudioClip.init();
-
-// Load and play audio
-audioClip = new AudioClip("/audio/pacman.wav", volume);
-audioClip.play();
-
-// Pause audio
-audioClip.stop();
-
-// Resume from pause
-audioClip.play();
-
-// Cleanup when done
-AudioClip.destroy();
+```bash
+./gradlew test
 ```
 
-**Adding Custom Audio:**
-1. Place WAV files in `app/src/main/resources/audio/`
-2. Create AudioClip instance with resource path and volume
-3. Use `play()` and `stop()` methods to control playback
+If you want a clean build first:
+
+```bash
+./gradlew clean test
+```
 
 ## Troubleshooting
 
 **LWJGL native libraries fail to load:**
 - Verify your Java version: `java -version`
 - On macOS, ensure OpenGL support is available
-- Check that Gradle correctly downloaded natives: `ls ~/.gradle/caches/`
+- Delete Gradle cache and retry: `./gradlew clean build --refresh-dependencies`
 
-**Window doesn't appear:**
-- Ensure your GPU driver is up-to-date
+**Window or display issues:**
+- Make sure your GPU drivers are up to date
+- Test on another machine if OpenGL support is uncertain
+- Confirm the window is created successfully and GLFW reports no errors
+
+**Performance problems:**
+- Reduce the number of on-screen objects
+- Check console logs for OpenGL or LWJGL errors
+- Profile with Java Flight Recorder or a similar tool
+
+## Resources
+
+- [LWJGL Documentation](https://www.lwjgl.org/)
+- [OpenGL Tutorials](https://learnopengl.com/)
+- [Java Game Development](https://docs.oracle.com/en/java/)
+- [Gradle Build Tool](https://gradle.org/learn-more/)
+
 - Try running with explicit JDK: `JAVA_HOME=/path/to/jdk ./gradlew :app:run`
 
 **Performance issues:**
