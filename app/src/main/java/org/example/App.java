@@ -8,8 +8,6 @@ import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.nio.IntBuffer;
-
 import org.example.audio.AudioClip;
 import org.example.game.Enemy;
 import org.example.game.Menu;
