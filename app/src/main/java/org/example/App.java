@@ -39,7 +39,7 @@ public class App {
     static int windowHeight;
 
     enum GameState {
-        MENU, PLAYING, PAUSED, SETTINGS, GAME_OVER
+        MENU, PLAYING, PAUSED, SETTINGS, GAME_OVER, WIN
     }
 
     static GameState currentState = GameState.MENU;
@@ -121,6 +121,10 @@ public class App {
                         audioClip.stop();
                         isAudioPaused = true;
                     }
+                    break;
+                case WIN:
+                    handleWinInput();
+                    renderWinScreen();
                     break;
                 case GAME_OVER:
                     handleGameOverInput();
@@ -256,6 +260,10 @@ public class App {
         Font.renderText(10, 20, "Score: " + score);
         glEnable(GL_TEXTURE_2D);
 
+        if (world.allCoinsCollected()) {
+            currentState = GameState.WIN;
+        }
+
         for (Enemy enemy : enemies) {
             enemy.render();
             if (enemy.checkCollisionWithPlayer(player)) {
@@ -360,9 +368,56 @@ public class App {
 
         // Draw text
         glDisable(GL_TEXTURE_2D);
-        Font.renderText((windowWidth / 2) - (windowWidth / 2)* 0.2f, 200, "GAME OVER", 2.0f);
-        Font.renderText((windowWidth / 2) - (windowWidth / 2)* 0.15f, 300, "Final Score: " + score);
-        Font.renderText((windowWidth / 2) - (windowWidth / 2)* 0.25f, 400, "Press ENTER to return to Menu");
+        Font.renderText((windowWidth / 2) - (windowWidth / 2) * 0.2f, 200, "GAME OVER", 2.0f);
+        Font.renderText((windowWidth / 2) - (windowWidth / 2) * 0.15f, 300, "Final Score: " + score);
+        Font.renderText((windowWidth / 2) - (windowWidth / 2) * 0.25f, 400, "Press ENTER to return to Menu");
+        glEnable(GL_TEXTURE_2D);
+    }
+
+    static void handleWinInput() {
+        if (input.isEnterPressed()) {
+            score = 0;
+            player = null;
+            currentState = GameState.MENU;
+        }
+    }
+
+    static void renderWinScreen() {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        if (audioClip != null) {
+            audioClip.cleanUp();
+            audioClip = null;
+        }
+
+        if (world != null)
+            world.render();
+
+        if (player != null)
+            player.render();
+
+        if (enemies != null)
+            for (Enemy enemy : enemies)
+                enemy.render();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glColor4f(0, 0, 0, 0.7f);
+        glBegin(GL_QUADS);
+        glVertex2f(0, 0);
+        glVertex2f(windowWidth, 0);
+        glVertex2f(windowWidth, windowHeight);
+        glVertex2f(0, windowHeight);
+        glEnd();
+
+        glDisable(GL_BLEND);
+        glColor4f(1, 1, 1, 1);
+
+        glDisable(GL_TEXTURE_2D);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.15f), 200, "YOU WIN!", 2.0f);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.15f), 300, "Final Score: " + score);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.2f), 400, "Press ENTER to return to Menu");
         glEnable(GL_TEXTURE_2D);
     }
 

@@ -1,5 +1,8 @@
 package org.example.game;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import org.example.App;
 import org.example.audio.AudioClip;
 import org.lwjgl.opengl.GL11;
@@ -102,6 +105,11 @@ public class World {
                 System.out.println(exc.getMessage());
             }
         }
+    }
+
+    public boolean allCoinsCollected() {
+        return Arrays.stream(coins).flatMap(row -> IntStream.range(0, coins.length)
+                .mapToObj(i -> row[i])).allMatch(collected -> collected == false);
     }
 
     public void updateAudio() {
