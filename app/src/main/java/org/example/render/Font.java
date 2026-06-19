@@ -17,7 +17,7 @@ public class Font {
      */
     public static void renderText(float x, float y, String text) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            ByteBuffer buffer = stack.malloc(text.length() * 270);
+            ByteBuffer buffer = stack.malloc(text.length() * 300);
 
             int quads = STBEasyFont.stb_easy_font_print(x, y, text, null, buffer);
 
@@ -40,7 +40,7 @@ public class Font {
      */
     public static void renderText(float x, float y, String text, float scale) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            ByteBuffer buffer = stack.malloc(text.length() * 270);
+            ByteBuffer buffer = stack.malloc(text.length() * 300);
 
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, 0);

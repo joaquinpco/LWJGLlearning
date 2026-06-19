@@ -6,8 +6,10 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.example.audio.AudioClip;
 import org.example.game.Enemy;
@@ -215,13 +217,16 @@ public class App {
 
         boolean[][] walkable = world.getWalkableGrid();
 
+        Set<String> busy = new HashSet<>();
+
         for (int y = 1; y <= numberOfEnemies; y++) {
             int tileX, tileY;
             do {
                 tileX = 1 * randomEnemies.nextInt(cols - 2);
                 tileY = 1 * randomEnemies.nextInt(rows - 2);
-            } while (!walkable[tileY][tileX]);
+            } while (!walkable[tileY][tileX] || busy.contains(tileX + "," + tileY));
 
+            busy.add(tileX + "," + tileY);
             enemies.add(
                     new Enemy(
                             tileX * World.TILE_SIZE + centerOffset,
@@ -314,8 +319,8 @@ public class App {
 
         // Draw text
         glDisable(GL_TEXTURE_2D);
-        Font.renderText(300, 250, "PAUSED");
-        Font.renderText(250, 350, "Press ESC to Resume");
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.1f), 250, "PAUSED", 4f);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.08f), 350, "Press ESC to Resume");
         glEnable(GL_TEXTURE_2D);
     }
 
