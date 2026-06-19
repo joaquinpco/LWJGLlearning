@@ -355,9 +355,9 @@ public class App {
 
         // Draw text
         glDisable(GL_TEXTURE_2D);
-        Font.renderText(280, 200, "GAME OVER");
-        Font.renderText(250, 300, "Final Score: " + score);
-        Font.renderText(200, 400, "Press ENTER to return to Menu");
+        Font.renderText((windowWidth / 2) - (windowWidth / 2)* 0.2f, 200, "GAME OVER", 2.0f);
+        Font.renderText((windowWidth / 2) - (windowWidth / 2)* 0.15f, 300, "Final Score: " + score);
+        Font.renderText((windowWidth / 2) - (windowWidth / 2)* 0.25f, 400, "Press ENTER to return to Menu");
         glEnable(GL_TEXTURE_2D);
     }
 
