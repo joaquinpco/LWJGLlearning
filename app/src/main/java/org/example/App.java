@@ -6,8 +6,10 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.example.audio.AudioClip;
 import org.example.game.Enemy;
@@ -37,7 +39,7 @@ public class App {
     static int windowHeight;
 
     enum GameState {
-        MENU, PLAYING, PAUSED, SETTINGS, GAME_OVER
+        MENU, PLAYING, PAUSED, SETTINGS, GAME_OVER, WIN
     }
 
     static GameState currentState = GameState.MENU;
@@ -119,6 +121,10 @@ public class App {
                         audioClip.stop();
                         isAudioPaused = true;
                     }
+                    break;
+                case WIN:
+                    handleWinInput();
+                    renderWinScreen();
                     break;
                 case GAME_OVER:
                     handleGameOverInput();
@@ -215,13 +221,16 @@ public class App {
 
         boolean[][] walkable = world.getWalkableGrid();
 
+        Set<String> busy = new HashSet<>();
+
         for (int y = 1; y <= numberOfEnemies; y++) {
             int tileX, tileY;
             do {
                 tileX = 1 * randomEnemies.nextInt(cols - 2);
                 tileY = 1 * randomEnemies.nextInt(rows - 2);
-            } while (!walkable[tileY][tileX]);
+            } while (!walkable[tileY][tileX] || busy.contains(tileX + "," + tileY));
 
+            busy.add(tileX + "," + tileY);
             enemies.add(
                     new Enemy(
                             tileX * World.TILE_SIZE + centerOffset,
@@ -250,6 +259,10 @@ public class App {
         glColor3f(1.0f, 1.0f, 1.0f);
         Font.renderText(10, 20, "Score: " + score);
         glEnable(GL_TEXTURE_2D);
+
+        if (world.allCoinsCollected()) {
+            currentState = GameState.WIN;
+        }
 
         for (Enemy enemy : enemies) {
             enemy.render();
@@ -314,8 +327,8 @@ public class App {
 
         // Draw text
         glDisable(GL_TEXTURE_2D);
-        Font.renderText(300, 250, "PAUSED");
-        Font.renderText(250, 350, "Press ESC to Resume");
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.1f), 250, "PAUSED", 4f);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.08f), 350, "Press ESC to Resume");
         glEnable(GL_TEXTURE_2D);
     }
 
@@ -355,9 +368,56 @@ public class App {
 
         // Draw text
         glDisable(GL_TEXTURE_2D);
-        Font.renderText(280, 200, "GAME OVER");
-        Font.renderText(250, 300, "Final Score: " + score);
-        Font.renderText(200, 400, "Press ENTER to return to Menu");
+        Font.renderText((windowWidth / 2) - (windowWidth / 2) * 0.2f, 200, "GAME OVER", 2.0f);
+        Font.renderText((windowWidth / 2) - (windowWidth / 2) * 0.15f, 300, "Final Score: " + score);
+        Font.renderText((windowWidth / 2) - (windowWidth / 2) * 0.25f, 400, "Press ENTER to return to Menu");
+        glEnable(GL_TEXTURE_2D);
+    }
+
+    static void handleWinInput() {
+        if (input.isEnterPressed()) {
+            score = 0;
+            player = null;
+            currentState = GameState.MENU;
+        }
+    }
+
+    static void renderWinScreen() {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        if (audioClip != null) {
+            audioClip.cleanUp();
+            audioClip = null;
+        }
+
+        if (world != null)
+            world.render();
+
+        if (player != null)
+            player.render();
+
+        if (enemies != null)
+            for (Enemy enemy : enemies)
+                enemy.render();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glColor4f(0, 0, 0, 0.7f);
+        glBegin(GL_QUADS);
+        glVertex2f(0, 0);
+        glVertex2f(windowWidth, 0);
+        glVertex2f(windowWidth, windowHeight);
+        glVertex2f(0, windowHeight);
+        glEnd();
+
+        glDisable(GL_BLEND);
+        glColor4f(1, 1, 1, 1);
+
+        glDisable(GL_TEXTURE_2D);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.15f), 200, "YOU WIN!", 2.0f);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.15f), 300, "Final Score: " + score);
+        Font.renderText((windowWidth / 2) - (windowWidth * 0.2f), 400, "Press ENTER to return to Menu");
         glEnable(GL_TEXTURE_2D);
     }
 
