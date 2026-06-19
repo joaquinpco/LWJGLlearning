@@ -109,7 +109,7 @@ public class World {
 
     public boolean allCoinsCollected() {
         return Arrays.stream(coins).flatMap(row -> IntStream.range(0, coins.length)
-                .mapToObj(i -> row[i])).allMatch(collected -> collected == false);
+                .mapToObj(i -> row[i])).allMatch(isCoinPlaced -> isCoinPlaced == false);
     }
 
     public void updateAudio() {
