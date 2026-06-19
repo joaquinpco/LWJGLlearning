@@ -8,6 +8,13 @@ import java.nio.ByteBuffer;
 
 public class Font {
 
+    /**
+     * Renders a text string at the given position using STB easy font.
+     *
+     * @param x the x coordinate in screen space where text will start
+     * @param y the y coordinate in screen space where text will start
+     * @param text the text to render
+     */
     public static void renderText(float x, float y, String text) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer buffer = stack.malloc(text.length() * 270);
@@ -21,6 +28,16 @@ public class Font {
         }
     }
 
+    /**
+     * Renders a text string at the given position using STB easy font, scaled by the provided factor.
+     *
+     * This method uses an OpenGL matrix transform so the rendered text size can be adjusted.
+     *
+     * @param x the x coordinate in screen space where text will start
+     * @param y the y coordinate in screen space where text will start
+     * @param text the text to render
+     * @param scale the scale factor to apply to the rendered text (1.0 = normal size)
+     */
     public static void renderText(float x, float y, String text, float scale) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer buffer = stack.malloc(text.length() * 270);
