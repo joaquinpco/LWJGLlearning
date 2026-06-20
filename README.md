@@ -137,6 +137,7 @@ Contributions are welcome! To contribute:
 - Better graphics and visual polish
 - More sound effects and music tracks
 - Smarter enemy AI and maze behavior
+- Enemy pathfinding now avoids overlapping other enemies during pursuit
 - Power-ups and level progression
 - Scoreboards and high-score saving
 - Multiple maze layouts or levels
