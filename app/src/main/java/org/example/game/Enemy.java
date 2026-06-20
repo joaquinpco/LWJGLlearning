@@ -9,6 +9,7 @@ import static org.lwjgl.opengl.GL11.glVertex2d;
 
 import java.util.List;
 
+import org.example.App;
 import org.example.algorithm.AStarPathFinder;
 import org.example.algorithm.PathNode;
 import org.example.render.Texture;
@@ -145,8 +146,34 @@ public class Enemy {
     }
 
     private List<PathNode> getPathToPlayer(Player player) {
+        boolean[][] walkable = copyWalkableGrid(world.getWalkableGrid());
+        blockOccupiedTiles(walkable);
+
         PathNode start = new PathNode(getTileX(), getTileY());
         PathNode goal = new PathNode(getPlayerTileX(player), getPlayerTileY(player));
-        return pathFinder.findPath(start, goal, world.getWalkableGrid());
+        return pathFinder.findPath(start, goal, walkable);
+    }
+
+    private boolean[][] copyWalkableGrid(boolean[][] grid){
+        boolean[][] copy = new boolean[grid.length][grid[0].length];
+        for(int i = 0; i < grid.length; i++){
+            System.arraycopy(grid[i], 0, copy[i], 0, grid[i].length);
+        }
+        return copy;
+    }
+
+    private void blockOccupiedTiles(boolean[][] walkable){
+        for(Enemy other: App.enemies) {
+            int tileX = other.getTileX();
+            int tileY = other.getTileY();
+            if(other == this)
+                continue;
+
+            if(tileX >= 0 && tileX < walkable[0].length
+                && tileY >= 0 && tileY < walkable[0].length
+             ){
+                walkable[tileY][tileX] = false;
+             }
+        }
     }
 }
