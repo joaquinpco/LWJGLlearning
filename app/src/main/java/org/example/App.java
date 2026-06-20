@@ -23,7 +23,7 @@ import org.example.render.Font;
 public class App {
 
     static Player player;
-    static List<Enemy> enemies;
+    public static List<Enemy> enemies;
     static World world;
 
     static Input input;
