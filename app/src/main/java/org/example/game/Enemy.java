@@ -164,13 +164,14 @@ public class Enemy {
 
     private void blockOccupiedTiles(boolean[][] walkable){
         for(Enemy other: App.enemies) {
+            if (other == this) {
+                continue;
+            }
+
             int tileX = other.getTileX();
             int tileY = other.getTileY();
-            if(other == this)
-                continue;
-
-            if(tileX >= 0 && tileX < walkable[0].length
-                && tileY >= 0 && tileY < walkable[0].length
+            if (tileX >= 0 && tileX < walkable[0].length
+                && tileY >= 0 && tileY < walkable.length
              ){
                 walkable[tileY][tileX] = false;
              }
