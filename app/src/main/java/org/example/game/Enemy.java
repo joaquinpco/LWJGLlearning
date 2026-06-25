@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2d;
 
 import java.util.List;
+import java.util.Random;
 
 import org.example.App;
 import org.example.algorithm.AStarPathFinder;
@@ -23,6 +24,14 @@ public class Enemy {
     public float width = 32, height = 32;
     private World world;
     private Settings settings;
+
+    private int goalOffsetX = 0;
+    private int goalOffsetY = 0;
+
+    private int lastPlayerTileX = -1;
+    private int lastPlayerTileY = -1;
+
+    private final Random random = new Random();
 
     public Enemy(float startX, float startY,
             String spriteName,
@@ -150,20 +159,40 @@ public class Enemy {
         blockOccupiedTiles(walkable);
 
         PathNode start = new PathNode(getTileX(), getTileY());
-        PathNode goal = new PathNode(getPlayerTileX(player), getPlayerTileY(player));
+
+        int playerTileX = getPlayerTileX(player);
+        int playerTileY = getPlayerTileY(player);
+
+        if (playerTileX != lastPlayerTileX || playerTileY != lastPlayerTileY) {
+            lastPlayerTileX = playerTileX;
+            lastPlayerTileY = playerTileY;
+            goalOffsetX = random.nextInt(3) - 1; // -1, 0, 1
+            goalOffsetY = random.nextInt(3) - 1;
+        }
+
+        // make enemies diverge when pathfinding
+        int goalX = divergeWithJitter(playerTileX + goalOffsetX, 0, walkable[0].length - 1);
+        int goalY = divergeWithJitter(playerTileY + goalOffsetY, 0, walkable.length - 1);
+
+        PathNode goal = new PathNode(goalX, goalY);
+
         return pathFinder.findPath(start, goal, walkable);
     }
 
-    private boolean[][] copyWalkableGrid(boolean[][] grid){
+    private int divergeWithJitter(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    private boolean[][] copyWalkableGrid(boolean[][] grid) {
         boolean[][] copy = new boolean[grid.length][grid[0].length];
-        for(int i = 0; i < grid.length; i++){
+        for (int i = 0; i < grid.length; i++) {
             System.arraycopy(grid[i], 0, copy[i], 0, grid[i].length);
         }
         return copy;
     }
 
-    private void blockOccupiedTiles(boolean[][] walkable){
-        for(Enemy other: App.enemies) {
+    private void blockOccupiedTiles(boolean[][] walkable) {
+        for (Enemy other : App.enemies) {
             if (other == this) {
                 continue;
             }
@@ -171,10 +200,9 @@ public class Enemy {
             int tileX = other.getTileX();
             int tileY = other.getTileY();
             if (tileX >= 0 && tileX < walkable[0].length
-                && tileY >= 0 && tileY < walkable.length
-             ){
+                    && tileY >= 0 && tileY < walkable.length) {
                 walkable[tileY][tileX] = false;
-             }
+            }
         }
     }
 }
